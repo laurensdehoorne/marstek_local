@@ -1,0 +1,72 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Marstek Local",
+        "description": "Connect to your Marstek battery via the local UDP API. Ensure the Open API is enabled in the Marstek app first.",
+        "data": {
+          "host": "IP Address",
+          "udp_port": "UDP Port",
+          "scan_interval": "Scan Interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to the device. Check the IP address, port, and that the Open API is enabled in the Marstek app.",
+      "unknown": "Unexpected error. Check the logs for details."
+    },
+    "abort": {
+      "already_configured": "This device is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "bat_soc": { "name": "Battery SOC" },
+      "bat_cap": { "name": "Battery Capacity" },
+      "bat_power": { "name": "Battery Power" },
+      "pv_power": { "name": "Solar Power" },
+      "ongrid_power": { "name": "Grid Power" },
+      "offgrid_power": { "name": "Off-grid Power" },
+      "total_pv_energy": { "name": "Total Solar Energy" },
+      "total_grid_output_energy": { "name": "Total Grid Export" },
+      "total_grid_input_energy": { "name": "Total Grid Import" },
+      "total_load_energy": { "name": "Total Load Energy" },
+      "mode": { "name": "Operating Mode" },
+      "ct_total_power": { "name": "CT Total Power" },
+      "phase_a_power": { "name": "Phase A Power" },
+      "phase_b_power": { "name": "Phase B Power" },
+      "phase_c_power": { "name": "Phase C Power" },
+      "ct_input_energy": { "name": "CT Cumulative Input" },
+      "ct_output_energy": { "name": "CT Cumulative Output" },
+      "bat_temp": { "name": "Battery Temperature" },
+      "bat_remaining": { "name": "Battery Remaining Capacity" },
+      "bat_rated": { "name": "Battery Rated Capacity" },
+      "pv1_power": { "name": "PV1 Power" },
+      "pv1_voltage": { "name": "PV1 Voltage" },
+      "pv1_current": { "name": "PV1 Current" },
+      "pv2_power": { "name": "PV2 Power" },
+      "pv2_voltage": { "name": "PV2 Voltage" },
+      "pv2_current": { "name": "PV2 Current" },
+      "pv3_power": { "name": "PV3 Power" },
+      "pv4_power": { "name": "PV4 Power" }
+    },
+    "select": {
+      "operating_mode": {
+        "name": "Operating Mode",
+        "state": {
+          "Auto": "Auto",
+          "AI": "AI",
+          "Manual": "Manual",
+          "Passive": "Passive",
+          "UPS": "UPS"
+        }
+      }
+    },
+    "number": {
+      "dod": { "name": "Depth of Discharge" }
+    },
+    "switch": {
+      "led": { "name": "Panel LED" }
+    }
+  }
+}
