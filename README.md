@@ -76,8 +76,47 @@ The integration will validate the connection and auto-detect the device model fr
 | Entity | Type | Description |
 |---|---|---|
 | Operating Mode | Select | Switch between Auto / AI / Manual / Passive / UPS |
+| Passive Power | Number (−5000 – +5000 W) | **Immediately** activates Passive mode at this wattage. Positive = charge, negative = discharge. Use in automations to force charge/discharge on demand. |
+| Passive Duration | Number (0 – 86400 s) | Countdown before reverting to previous mode. 0 = run indefinitely. Set this before setting Passive Power. |
 | Depth of Discharge | Number (30–88 %) | Minimum SOC before discharge stops |
 | Panel LED | Switch | Turn the front LED on or off |
+
+### Triggering charge/discharge from automations
+
+```yaml
+# Force charge at 2 kW for 1 hour, then auto-revert
+- service: number.set_value
+  target:
+    entity_id: number.marstek_passive_duration
+  data:
+    value: 3600
+- service: number.set_value
+  target:
+    entity_id: number.marstek_passive_power
+  data:
+    value: 2000
+
+# Discharge at 1.5 kW indefinitely (until mode is changed)
+- service: number.set_value
+  target:
+    entity_id: number.marstek_passive_duration
+  data:
+    value: 0
+- service: number.set_value
+  target:
+    entity_id: number.marstek_passive_power
+  data:
+    value: -1500
+
+# Stop passive control — return to Auto
+- service: select.select_option
+  target:
+    entity_id: select.marstek_operating_mode
+  data:
+    option: Auto
+```
+
+> **Sign convention note:** The Marstek API docs describe `power` as "Setting power [W]" without specifying charge vs discharge direction. Positive values are expected to charge the battery. Verify with a small test value (e.g. +100 W) on your hardware before using large values in automations.
 
 ---
 

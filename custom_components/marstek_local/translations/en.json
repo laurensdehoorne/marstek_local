@@ -63,7 +63,15 @@
       }
     },
     "number": {
-      "dod": { "name": "Depth of Discharge" }
+      "dod": { "name": "Depth of Discharge" },
+      "passive_power": {
+        "name": "Passive Power",
+        "description": "Activates Passive mode immediately at this wattage. Positive = charge, negative = discharge. 0 = idle."
+      },
+      "passive_duration": {
+        "name": "Passive Duration",
+        "description": "Countdown in seconds before the device reverts to the previous mode. 0 = run indefinitely."
+      }
     },
     "switch": {
       "led": { "name": "Panel LED" }

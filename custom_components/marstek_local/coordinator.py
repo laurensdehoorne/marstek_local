@@ -22,6 +22,9 @@ class MarstekUDPClient:
         self._req_id = 0
         self._lock = asyncio.Lock()
         self.src: str = ""
+        # Stored passive-mode settings; updated whenever a passive command is sent
+        self._passive_power: int = 0
+        self._passive_duration: int = 0
 
     def _next_id(self) -> int:
         self._req_id = (self._req_id + 1) % 65535
@@ -78,6 +81,7 @@ class MarstekUDPClient:
         return await self.async_send("PV.GetStatus", {"id": 0})
 
     async def set_mode(self, mode: str) -> bool:
+        """Switch operating mode. Passive mode uses last stored passive settings."""
         mode_cfgs: dict[str, dict[str, Any]] = {
             "Auto": {"auto_cfg": {"enable": 1}},
             "AI": {"ai_cfg": {"enable": 1}},
@@ -91,11 +95,41 @@ class MarstekUDPClient:
                     "enable": 1,
                 }
             },
-            "Passive": {"passive_cfg": {"power": 0, "cd_time": 0}},
+            "Passive": {
+                "passive_cfg": {
+                    "power": self._passive_power,
+                    "cd_time": self._passive_duration,
+                }
+            },
             "UPS": {"ups_cfg": {"enable": 1}},
         }
         cfg = {"mode": mode, **mode_cfgs.get(mode, {})}
         result = await self.async_send("ES.SetMode", {"id": 0, "config": cfg})
+        return bool(result.get("set_result", False))
+
+    async def set_passive(self, power: int, cd_time: int | None = None) -> bool:
+        """Activate Passive mode with given power [W] and optional countdown [s].
+
+        Positive power = charge, negative power = discharge (sign convention
+        matches the battery's on-grid perspective; verify with your hardware).
+        cd_time=0 means no countdown (runs until changed).
+        """
+        if cd_time is not None:
+            self._passive_duration = cd_time
+        self._passive_power = power
+        result = await self.async_send(
+            "ES.SetMode",
+            {
+                "id": 0,
+                "config": {
+                    "mode": "Passive",
+                    "passive_cfg": {
+                        "power": self._passive_power,
+                        "cd_time": self._passive_duration,
+                    },
+                },
+            },
+        )
         return bool(result.get("set_result", False))
 
     async def set_dod(self, value: int) -> bool:
